@@ -34,57 +34,105 @@ public class SampleClass
     public void TestMethod() { }
 }
 
+public class ClassWithOutAttributes
+{
+    public int Prop { get; set; }
+    public void EmptyMethod() { }
+}
+
+public class EmptyClass { }
+
 public class ReflectionHelper
 {
     public static void PrintTypeInfo(Type type)
     {
-        Attribute[] classAtributes = type.GetCustomAttributes().ToArray();
+        Attribute[] classAttributes = type.GetCustomAttributes().ToArray();
 
-        foreach (Attribute attr in classAtributes)
+        if (classAttributes.OfType<DisplayNameAttribute>().Any() == true || classAttributes.OfType<VersionAttribute>().Any() == true)
         {
-            if (attr is DisplayNameAttribute displayName)
+            foreach (Attribute attr in classAttributes)
             {
-                Console.WriteLine($"Class Name: \n{displayName.DisplayName}");
-            }
+                if (attr is DisplayNameAttribute displayName)
+                {
+                    Console.WriteLine($"Class Name: {displayName.DisplayName}");
+                }
 
-            else if (attr is VersionAttribute version)
-            {
-                Console.WriteLine($"Class Version: \n{version.Major}.{version.Minor}");
+                else if (attr is VersionAttribute version)
+                {
+                    Console.WriteLine($"Class Version: {version.Major}.{version.Minor}");
+                }
             }
+        }
+
+        else
+        {
+            Console.WriteLine("Class has no DisplayNameAttribute and VersionAttribute");
         }
 
         Console.WriteLine("Methods:");
 
-        MethodInfo[] methods = type.GetMethods();
+        MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
-        foreach (MethodInfo method in methods)
+        if (methods.Count() != 0)
         {
-            Attribute[] methodAttributes = method.GetCustomAttributes().ToArray();
-
-            foreach (Attribute attr in methodAttributes)
+            foreach (MethodInfo method in methods)
             {
-                if (attr is DisplayNameAttribute displayName)
+                Attribute[] methodAttributes = method.GetCustomAttributes().ToArray();
+
+                if (methodAttributes.OfType<DisplayNameAttribute>().Any() == true)
                 {
-                    Console.WriteLine($"{method.Name} / {displayName.DisplayName}");
+                    foreach (Attribute attr in methodAttributes)
+                    {
+                        if (attr is DisplayNameAttribute displayName)
+                        {
+                            Console.WriteLine($"{method.Name} / {displayName.DisplayName}");
+                        }
+                    }
+                }
+
+                else
+                {
+                    Console.WriteLine($"{method.Name} / Method has no DisplayNameAttribute");
                 }
             }
         }
 
+        else
+        {
+            Console.WriteLine("Class has no methods");
+        }
+
         Console.WriteLine("Properties:");
 
-        PropertyInfo[] properties = type.GetProperties();
+        PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
-        foreach (PropertyInfo property in properties)
+        if (properties.Count() != 0)
         {
-            Attribute[] propertyAttributes = property.GetCustomAttributes().ToArray();
-
-            foreach (Attribute attr in propertyAttributes)
+            foreach (PropertyInfo property in properties)
             {
-                if (attr is DisplayNameAttribute displayName)
+                Attribute[] propertyAttributes = property.GetCustomAttributes().ToArray();
+
+                if (propertyAttributes.OfType<DisplayNameAttribute>().Any() == true)
                 {
-                    Console.WriteLine($"{property.Name} / {displayName.DisplayName}");
+                    foreach (Attribute attr in propertyAttributes)
+                    {
+                        if (attr is DisplayNameAttribute displayName)
+                        {
+                            Console.WriteLine($"{property.Name} / {displayName.DisplayName}");
+                        }
+                    }
+                }
+
+                else
+                {
+                    Console.WriteLine($"{property.Name} / Property has no DisplayNameAttribute");
                 }
             }
+        }
+
+        else
+        {
+            Console.WriteLine("Class has no properties");
         }
     }
 }

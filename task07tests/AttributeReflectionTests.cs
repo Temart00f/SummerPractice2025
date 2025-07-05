@@ -9,7 +9,6 @@ public class AttributeReflectionTests
     {
         var type = typeof(SampleClass);
         var attribute = type.GetCustomAttribute<DisplayNameAttribute>();
-        ReflectionHelper.PrintTypeInfo(type);
         Assert.NotNull(attribute);
         Assert.Equal("Пример класса", attribute.DisplayName);
     }
@@ -43,7 +42,7 @@ public class AttributeReflectionTests
     }
 
     [Fact]
-    public void PrintTypeInfo_OutputCorrectLines()
+    public void PrintTypeInfo_OutputCorrectNamesAndVersion()
     {
         var originalOutput = Console.Out;
         var stringWriter = new StringWriter();
@@ -59,5 +58,41 @@ public class AttributeReflectionTests
         Assert.Contains("1.0", actualOutput);
         Assert.Contains("Number / Числовое свойство", actualOutput);
         Assert.Contains("TestMethod / Тестовый метод", actualOutput);
+    }
+
+    [Fact]
+    public void PrintTypeInfo_OutputCorrectNamesAndLines()
+    {
+        var originalOutput = Console.Out;
+        var stringWriter = new StringWriter();
+        Console.SetOut(stringWriter);
+
+        var type = typeof(ClassWithOutAttributes);
+        ReflectionHelper.PrintTypeInfo(type);
+
+        Console.SetOut(originalOutput);
+        var actualOutput = stringWriter.ToString();
+
+        Assert.Contains("Class has no DisplayNameAttribute and VersionAttribute", actualOutput);
+        Assert.Contains("Prop / Property has no DisplayNameAttribute", actualOutput);
+        Assert.Contains("EmptyMethod / Method has no DisplayNameAttribute", actualOutput);
+    }
+
+    [Fact]
+    public void PrintTypeInfo_OutputCorrectLines()
+    {
+        var originalOutput = Console.Out;
+        var stringWriter = new StringWriter();
+        Console.SetOut(stringWriter);
+
+        var type = typeof(EmptyClass);
+        ReflectionHelper.PrintTypeInfo(type);
+
+        Console.SetOut(originalOutput);
+        var actualOutput = stringWriter.ToString();
+
+        Assert.Contains("Class has no DisplayNameAttribute and VersionAttribute", actualOutput);
+        Assert.Contains("Class has no methods", actualOutput);
+        Assert.Contains("Class has no properties", actualOutput);
     }
 }
