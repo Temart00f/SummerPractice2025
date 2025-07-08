@@ -9,7 +9,7 @@ public class CommandRunner
         string currentDirectoryPath = Directory.GetCurrentDirectory();
         DirectoryInfo currentDirectory = new DirectoryInfo(currentDirectoryPath);
         string parentDirectory = currentDirectory.Parent!.Parent!.Parent!.Parent!.FullName;
-        string dllPath = Path.Combine(parentDirectory, "FileSystemCommands\\bin\\Debug\\net8.0\\FileSystemCommands.dll");
+        string dllPath = Path.Combine(parentDirectory, "FileSystemCommands", "bin", "Debug", "net8.0", "FileSystemCommands.dll");
 
         var testDirectory = Path.Combine(Path.GetTempPath(), "TestDirectory");
         var testSubDirectory = Path.Combine(testDirectory, "TestSubDirectory");
