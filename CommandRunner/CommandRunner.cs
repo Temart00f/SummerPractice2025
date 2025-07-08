@@ -27,7 +27,7 @@ public class CommandRunner
         var directorySizeCommandType = asm.GetType("FileSystemCommands.DirectorySizeCommand");
         var findFilesCommandType = asm.GetType("FileSystemCommands.FindFilesCommand");
 
-        if (directorySizeCommandType != null && findFilesCommandType != null)
+        if (directorySizeCommandType is not null && findFilesCommandType is not null)
         {
             object commandSize = Activator.CreateInstance(directorySizeCommandType, [testDirectory])!;
             object commandTxt = Activator.CreateInstance(findFilesCommandType, [testDirectory, "*.txt"])!;
