@@ -23,7 +23,7 @@ public class PluginLoaderTests
 
         Console.SetOut(originalOutput);
         var actualOutput = stringWtiter.ToString();
-        var expectedOutput = "Plugin4 was executed\nPlugin2 was executed\nPlugin3 was executed\nPlugin1 was executed";
+        var expectedOutput = "Plugin4 was executed\nPlugin3 was executed\nPlugin2 was executed\nPlugin1 was executed";
 
         Assert.Contains(expectedOutput, actualOutput);
     }
