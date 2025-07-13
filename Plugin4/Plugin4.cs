@@ -2,8 +2,8 @@
 
 namespace Plugin4;
 
-[PluginLoad([])]
-public class Plugin4 : IPlugin
+[PluginLib.PluginLoad([])]
+public class Plugin4 : PluginLib.IPlugin
 {
     public void Execute()
     {

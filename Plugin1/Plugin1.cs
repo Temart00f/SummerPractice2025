@@ -1,9 +1,11 @@
-﻿using PluginLib;
+﻿using Plugin2;
+using Plugin3;
+using PluginLib;
 
 namespace Plugin1;
 
-[PluginLoad([typeof(Plugin2.Plugin2), typeof(Plugin3.Plugin3)])]
-public class Plugin1 : IPlugin
+[PluginLib.PluginLoad([typeof(Plugin2.Plugin2), typeof(Plugin3.Plugin3)])]
+public class Plugin1 : PluginLib.IPlugin
 {
     public void Execute()
     {

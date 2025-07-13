@@ -1,9 +1,10 @@
 ﻿using PluginLib;
+using Plugin4;
 
 namespace Plugin2;
 
-[PluginLoad([typeof(Plugin4.Plugin4)])]
-public class Plugin2 : IPlugin
+[PluginLib.PluginLoad([typeof(Plugin4.Plugin4)])]
+public class Plugin2 : PluginLib.IPlugin
 {
     public void Execute()
     {
