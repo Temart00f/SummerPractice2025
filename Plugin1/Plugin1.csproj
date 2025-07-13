@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\PluginLib\Pluginlib.csproj" />
+    <ProjectReference Include="..\task10\task10.csproj" />
+    <ProjectReference Include="..\Plugin2\Plugin2.csproj" />
+    <ProjectReference Include="..\Plugin3\Plugin3.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
