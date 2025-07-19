@@ -139,5 +139,3 @@ public class ServerThread
         return isRunning;
     }
 }
-
-

@@ -74,7 +74,7 @@ public class ServerThreadTests
 
         Exception exception = Assert.Throws<Exception>(() => hardStop.Execute());
 
-        Assert.Equal("HardStop cannot be executed on a non-server thread", exception.Message); 
+        Assert.Equal("HardStop cannot be executed on a non-server thread", exception.Message);
     }
 
     [Fact]
@@ -87,6 +87,6 @@ public class ServerThreadTests
 
         Exception exception = Assert.Throws<Exception>(() => softStop.Execute());
 
-        Assert.Equal("SoftStop cannot be executed on a non-server thread", exception.Message); 
+        Assert.Equal("SoftStop cannot be executed on a non-server thread", exception.Message);
     }
 }
