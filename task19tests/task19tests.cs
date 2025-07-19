@@ -35,15 +35,15 @@ public class Task19Tests
         var processor = new ServerThread();
         var command1 = new TestCommand(1);
         var command2 = new TestCommand(2);
-    
+
         processor.Run();
         processor.AddCommand(command1);
         processor.AddCommand(command2);
 
-        bool completed = SpinWait.SpinUntil(() => 
-            command1.IsCompleted && command2.IsCompleted, 
+        bool completed = SpinWait.SpinUntil(() =>
+            command1.IsCompleted && command2.IsCompleted,
             TimeSpan.FromSeconds(2));
-    
+
         processor.Stop();
 
         Assert.True(completed);
