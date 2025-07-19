@@ -1,6 +1,7 @@
 using task17;
 using Xunit;
 using System.Threading;
+using Interfaces;
 
 namespace task17tests;
 

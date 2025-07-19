@@ -2,7 +2,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
-    <ProjectReference Include="..\task18\task18.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

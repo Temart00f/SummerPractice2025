@@ -1,17 +1,10 @@
 ﻿using System.Threading;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using Interfaces;
+using task18;
 
 namespace task17;
-
-public interface ICommand
-{
-    void Execute();
-}
-
-public interface IExceptionHandler
-{
-    void Handle();
-}
 
 public class ExceptionHandler : IExceptionHandler
 {
@@ -76,7 +69,8 @@ public class ServerThread
     private bool isHardStopRequested;
     private bool isSoftStopRequested;
     private bool isRunning = false;
-    private BlockingCollection<ICommand> commands = new();
+    private readonly BlockingCollection<ICommand> commands = new();
+    private readonly IScheduler scheduler = new RoundRobinScheduler();
 
     public void Run()
     {
@@ -85,7 +79,7 @@ public class ServerThread
         thread.Start();
     }
 
-    private void ThreadHandler()
+    protected void ThreadHandler()
     {
         while (isRunning)
         {
@@ -94,25 +88,41 @@ public class ServerThread
                 isRunning = false;
                 break;
             }
-            else if (isSoftStopRequested && !commands.Any())
+            else if (isSoftStopRequested && !commands.Any() && !scheduler.HasCommand())
             {
                 isRunning = false;
                 break;
             }
 
-            ICommand command = commands.Take();
-
-            try
+            if (commands.TryTake(out ICommand? newCommand))
             {
-                command.Execute();
+                scheduler.Add(newCommand);
             }
-            catch (Exception ex)
+
+            if (scheduler.HasCommand())
             {
-                ExceptionHandler exceptionHandler = new(command, ex);
-                exceptionHandler.Handle();
+                ICommand command = scheduler.Select();
+                try
+                {
+                    command.Execute();
+
+                    if (command is ILongRunningCommand longRunningCmd && !longRunningCmd.IsCompleted)
+                    {
+                        scheduler.Add(command);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var exceptionHandler = new ExceptionHandler(command, ex);
+                    exceptionHandler.Handle();
+                }
+            }
+            else
+            {
+                Thread.Sleep(10);
             }
         }
-    }
+    }        
 
     public void AddCommand(ICommand command)
     {
