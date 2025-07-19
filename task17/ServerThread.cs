@@ -66,13 +66,13 @@ public class SoftStop : ICommand
 
     public class TestCommand : ICommand
     {
-        public readonly int _id;
+        public readonly int Id;
         private int _counter = 0;
         private const int MaxExecutions = 3;
 
         public TestCommand(int id)
         {
-            _id = id;
+            Id = id;
         }
 
         public void Execute()
@@ -80,7 +80,7 @@ public class SoftStop : ICommand
             if (_counter >= MaxExecutions)
                 return;
             
-            Console.WriteLine($"Поток {_id} - вызов {++_counter}");
+            Console.WriteLine($"Поток {Id} - вызов {++_counter}");
             
             if (_counter < MaxExecutions)
                 throw new CommandNotCompletedException("Command is not completed");
@@ -162,6 +162,7 @@ public class ServerThread
                     catch (CommandNotCompletedException)
                     {
                         scheduler.Add(command);
+                        continue;
                     }
                     catch (Exception ex)
                     {

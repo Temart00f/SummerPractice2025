@@ -33,22 +33,22 @@ public class Task19Tests
     public void CommandProcessor_ExecutesMultipleCommandsInParallel()
     {
         var processor = new ServerThread();
-    var command1 = new TestCommand(1);
-    var command2 = new TestCommand(2);
+        var command1 = new TestCommand(1);
+        var command2 = new TestCommand(2);
     
-    processor.Run();
-    processor.AddCommand(command1);
-    processor.AddCommand(command2);
+        processor.Run();
+        processor.AddCommand(command1);
+        processor.AddCommand(command2);
 
-    bool completed = SpinWait.SpinUntil(() => 
-        command1.IsCompleted && command2.IsCompleted, 
-        TimeSpan.FromSeconds(2));
+        bool completed = SpinWait.SpinUntil(() => 
+            command1.IsCompleted && command2.IsCompleted, 
+            TimeSpan.FromSeconds(2));
     
-    processor.Stop();
+        processor.Stop();
 
-    Assert.True(completed);
-    Assert.True(command1.IsCompleted);
-    Assert.True(command2.IsCompleted);
+        Assert.True(completed);
+        Assert.True(command1.IsCompleted);
+        Assert.True(command2.IsCompleted);
     }
 
     [Fact]

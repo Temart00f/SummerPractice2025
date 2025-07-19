@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
+    <ProjectReference Include="..\task17\task17.csproj" />
   </ItemGroup>
 
   <ItemGroup>
