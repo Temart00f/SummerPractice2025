@@ -5,8 +5,8 @@ namespace task14tests;
 
 public class DefiniteIntegralTests
 {
-    Func<double, double> X = (double x) => x;
-    Func<double, double> SIN = (double x) => Math.Sin(x);
+    readonly Func<double, double> X = x => x;
+    readonly Func<double, double> SIN = Math.Sin;
 
     [Fact]
     public void DefiniteIntegral_FuncX_ShouldReturnZero() => Assert.Equal(0, DefiniteIntegral.Solve(-1, 1, X, 1e-4, 2), 1e-4);
