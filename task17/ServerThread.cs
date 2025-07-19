@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Interfaces;
 using task18;
+using System.Linq.Expressions;
 
 namespace task17;
 
@@ -63,6 +64,36 @@ public class SoftStop : ICommand
     }
 }
 
+    public class TestCommand : ICommand
+    {
+        public readonly int _id;
+        private int _counter = 0;
+        private const int MaxExecutions = 3;
+
+        public TestCommand(int id)
+        {
+            _id = id;
+        }
+
+        public void Execute()
+        {
+            if (_counter >= MaxExecutions)
+                return;
+            
+            Console.WriteLine($"Поток {_id} - вызов {++_counter}");
+            
+            if (_counter < MaxExecutions)
+                throw new CommandNotCompletedException("Command is not completed");
+        }
+
+        public bool IsCompleted => _counter >= MaxExecutions;
+    }
+
+public class CommandNotCompletedException : Exception
+{
+    public CommandNotCompletedException(string message) : base(message) { }
+}
+
 public class ServerThread
 {
     private Thread? thread;
@@ -79,50 +110,76 @@ public class ServerThread
         thread.Start();
     }
 
+    public void Stop()
+    {
+        if (thread is not null)
+        {
+            isRunning = false;
+            thread.Join();
+        }
+    }
+
     protected void ThreadHandler()
     {
         while (isRunning)
         {
-            if (isHardStopRequested)
+            try
             {
-                isRunning = false;
-                break;
-            }
-            else if (isSoftStopRequested && !commands.Any() && !scheduler.HasCommand())
-            {
-                isRunning = false;
-                break;
-            }
-
-            if (commands.TryTake(out ICommand? newCommand))
-            {
-                scheduler.Add(newCommand);
-            }
-
-            if (scheduler.HasCommand())
-            {
-                ICommand command = scheduler.Select();
-                try
+                if (isHardStopRequested)
                 {
-                    command.Execute();
+                    isRunning = false;
+                    break;
+                }
+                else if (isSoftStopRequested && !commands.Any() && !scheduler.HasCommand())
+                {
+                    isRunning = false;
+                    break;
+                }
 
-                    if (command is ILongRunningCommand longRunningCmd && !longRunningCmd.IsCompleted)
+                if (commands.TryTake(out ICommand? newCommand, 100))
+                {
+                    scheduler.Add(newCommand);
+                }
+
+                if (scheduler.HasCommand())
+                {
+                    ICommand command = scheduler.Select();
+                    try
+                    {
+                        command.Execute();
+
+                        if (command is TestCommand testCmd && !testCmd.IsCompleted)
+                        {
+                            scheduler.Add(command);
+                        }
+
+                        if (command is ILongRunningCommand longRunningCmd && !longRunningCmd.IsCompleted) //////////////////
+                        {
+                            scheduler.Add(command);
+                        }
+
+                    }
+                    catch (CommandNotCompletedException)
                     {
                         scheduler.Add(command);
                     }
+                    catch (Exception ex)
+                    {
+                        var exceptionHandler = new ExceptionHandler(command, ex);
+                        exceptionHandler.Handle();
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    var exceptionHandler = new ExceptionHandler(command, ex);
-                    exceptionHandler.Handle();
+                    Thread.Sleep(10);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Thread.Sleep(10);
+                throw new Exception($"Exception in main cycle: {ex.Message}");
             }
         }
-    }        
+    }
 
     public void AddCommand(ICommand command)
     {
